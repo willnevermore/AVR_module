@@ -34,24 +34,25 @@ typedef struct _global_task_queue
 
 typedef struct _task_type
 {
-	volatile uint32_t base;
-	volatile uint32_t current;
-	uint32_t total_count;
-	volatile uint32_t task_elapse;
-	uint8_t priority;
-	volatile bool is_ready_to_begin;
-	volatile bool task_is_end;
-	volatile bool auto_resume;
-    volatile uint32_t poll_cnt;
-    //volatile uint32_t error_handle;
-    //uint32_t count_times;
-	void (*call_func)(void);
+    volatile uint16_t current;
+    uint32_t total_count;
+    uint16_t time_t1;
+    uint16_t time_t2;
+    uint16_t time_tn;
+    uint8_t priority;
+    bool is_running_sleep;
+    volatile bool is_ready_to_begin;
+    volatile bool task_is_end;
+    volatile bool auto_resume;
+    void (*call_func)(void);
 }task_t;
+
+#define assert_int_flag_right(x) ((x == true) ? (true):(false))
 
 void task_init(void);
 
-task_t* task_create(void (*fun)(void),uint32_t wait_count,bool auto_resume,uint8_t priority);
-void task_resume(task_t * task,volatile uint32_t wait_count);
+task_t* task_create(void (*fun)(void),uint64_t wait_count,bool auto_resume,uint8_t priority);
+void task_resume(task_t * task,volatile uint64_t wait_count);
 void task_destory(task_t* task);
 void task_end(task_t *task);
 int8_t task_add_task_to_queue(task_t * task);
@@ -61,6 +62,7 @@ bool is_task_end(task_t * task);
 
 //internal function
 void task_poll(task_t * task);
+//void task_poll(task_t *task,uint16_t current);
 void det_timer_clear(void);
 void set_timer_clear(void);
 #endif /* APP_TASK_H_ */
